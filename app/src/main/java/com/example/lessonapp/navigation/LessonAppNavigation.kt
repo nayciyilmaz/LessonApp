@@ -21,7 +21,7 @@ fun LessonAppNavigation(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     NavHost(
-        navController = navController, startDestination = LessonAppScreen.LessonsScreen.route
+        navController = navController, startDestination = LessonAppScreen.AddNoteScreen.route
     ) {
         composable(route = LessonAppScreen.LessonsScreen.route) {
             LessonsScreen(
@@ -41,7 +41,20 @@ fun LessonAppNavigation(
             LessonDetailsScreen(navController = navController, lessonName = lessonName)
         }
         composable(route = LessonAppScreen.AddNoteScreen.route) {
-            AddNoteScreen(navController = navController)
+            AddNoteScreen(
+                navController = navController,
+                onStartClicked = { viewModel.onStartClicked() },
+                onResumeClicked = { viewModel.onResumeClicked() },
+                onStopClicked = { viewModel.onStopClicked() },
+                isStartEnabled = viewModel.isStartEnabled,
+                isResumeEnabled = viewModel.isResumeEnabled,
+                isStopEnabled = viewModel.isStopEnabled,
+                formattedTime = viewModel.formattedTime,
+                inputSubject = viewModel.inputSubject,
+                inputExplanation = viewModel.inputExplanation,
+                onUpdateSubjectName = { viewModel.updateSubjectName(it) },
+                onUpdateExplanationName = { viewModel.updateExplanationName(it) }
+            )
         }
         composable(route = LessonAppScreen.StatisticsScreen.route) {
             StatisticsScreen(navController = navController)

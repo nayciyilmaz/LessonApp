@@ -4,4 +4,16 @@
     <string name="title_ders">DERS</string>
     <string name="title_not_ekleme">NOT EKLEME</string>
     <string name="title_istatistik">İSTATİSTİK</string>
+    <string name="title_baslat">BAŞLAT</string>
+    <string name="title_devam_et">DEVAM ET</string>
+    <string name="title_durdur">DURDUR</string>
+    <string name="title_onayla">ONAYLA</string>
+    <string name="title_iptal">İPTAL</string>
+    <string name="title_konu_basligi">Konu Başlığı</string>
+    <string name="title_calisma_detaylari">Çalışma Detayları</string>
+    <string name="title_kaydet">KAYDET</string>
+    <string name="title_not_ekle">Not Ekle</string>
+    <string name="title_ders_ekle">Ders Ekle</string>
+    <string name="title_ders_kaydi">Ders Kaydı</string>
+    <string name="title_ders_ismi">Ders İsmi</string>
 </resources>

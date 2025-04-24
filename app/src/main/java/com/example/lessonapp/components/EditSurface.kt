@@ -3,7 +3,6 @@ package com.example.lessonapp.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -26,13 +25,13 @@ fun EditSurface(
     Surface(
         modifier
             .padding(16.dp)
-            .fillMaxWidth()
-            .height(42.dp),
+            .fillMaxWidth(),
         color = Color(0xFF309CF3)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
+            modifier = modifier.padding(top = 12.dp, bottom = 12.dp)
         ) {
             Icon(
                 imageVector = Icons.Default.Add,

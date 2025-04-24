@@ -1,5 +1,6 @@
 package com.example.lessonapp.screens
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.navigation.NavController
 import com.example.lessonapp.R
 import com.example.lessonapp.components.EditSurface
 import com.example.lessonapp.components.EditTopAppBar
+import com.example.lessonapp.navigation.LessonAppScreen
 
 @Composable
 fun LessonDetailsScreen(
@@ -43,7 +45,12 @@ fun LessonDetailsScreen(
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
-            EditSurface(title = "NOT EKLE")
+            EditSurface(
+                title = stringResource(R.string.title_not_ekle),
+                modifier = modifier.clickable {
+                    navController.navigate(LessonAppScreen.AddNoteScreen.route)
+                }
+            )
         }
     }
 }

@@ -28,7 +28,6 @@ import androidx.navigation.NavController
 import com.example.lessonapp.R
 import com.example.lessonapp.components.EditSurface
 import com.example.lessonapp.components.EditTopAppBar
-import com.example.lessonapp.navigation.LessonAppScreen
 import com.example.lessonapp.room.Item
 
 @Composable
@@ -65,7 +64,7 @@ fun LessonsScreen(
             )
 
             EditSurface(
-                title = "DERS EKLE",
+                title = stringResource(R.string.title_ders_ekle),
                 modifier = modifier.clickable {
                     showDialog = true
                 }
@@ -74,7 +73,7 @@ fun LessonsScreen(
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    title = { Text("Ders Kaydı") },
+                    title = { Text(stringResource(R.string.title_ders_kaydi)) },
                     text = {
                         Column {
                             Text("Eklemek istediğiniz dersi girin.")
@@ -83,7 +82,7 @@ fun LessonsScreen(
                                 onValueChange = {
                                     onUpdateLessonName(it)
                                 },
-                                label = { Text("Ders İsmi") },
+                                label = { Text(stringResource(R.string.title_ders_ismi)) },
                                 modifier = Modifier.fillMaxWidth(),
                                 singleLine = true
                             )
@@ -94,14 +93,14 @@ fun LessonsScreen(
                             onAddLesson(inputLesson)
                             showDialog = false
                         }) {
-                            Text("Onayla")
+                            Text(stringResource(R.string.title_onayla))
                         }
                     },
                     dismissButton = {
                         Button(onClick = {
                             showDialog = false
                         }) {
-                            Text("İptal")
+                            Text(stringResource(R.string.title_iptal))
                         }
                     }
                 )

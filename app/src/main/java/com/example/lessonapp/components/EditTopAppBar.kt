@@ -82,7 +82,7 @@ fun EditTopAppBar(
                     }) {
                         Icon(
                             imageVector = Icons.Default.BarChart,
-                            contentDescription = "İstatistik",
+                            contentDescription = null,
                             tint = Color.Blue
                         )
                     }
