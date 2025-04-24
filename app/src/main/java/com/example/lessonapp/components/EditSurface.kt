@@ -1,0 +1,53 @@
+package com.example.lessonapp.components
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+
+@Composable
+fun EditSurface(
+    modifier: Modifier = Modifier,
+    title: String
+) {
+    Surface(
+        modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .height(42.dp),
+        color = Color(0xFF309CF3)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = null
+            )
+            Text(
+                text = title,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+    HorizontalDivider(
+        color = Color(0xFF03A9F4),
+        thickness = 2.dp,
+        modifier = modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+    )
+}

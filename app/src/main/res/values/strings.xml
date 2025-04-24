@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LessonApp</string>
+        <string name="title_derslerim">DERSLERİM</string>
+    <string name="title_ders">DERS</string>
+    <string name="title_not_ekleme">NOT EKLEME</string>
+    <string name="title_istatistik">İSTATİSTİK</string>
+</resources>
