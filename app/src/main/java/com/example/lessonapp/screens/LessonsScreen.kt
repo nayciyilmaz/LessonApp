@@ -114,12 +114,12 @@ fun LessonsScreen(
                             .fillMaxWidth()
                             .padding(top = 8.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)
                             .clickable {
-                                val encodedName = java.net.URLEncoder.encode(lesson.name, "UTF-8")
-                                navController.navigate("Lesson Details Screen/$encodedName")
+                                val encodedName = java.net.URLEncoder.encode(lesson.lessonName, "UTF-8")
+                                navController.navigate("Lesson Details Screen/${encodedName}/${lesson.id}")
                             }
                     ) {
                         Text(
-                            text = lesson.name,
+                            text = lesson.lessonName,
                             modifier = Modifier.padding(16.dp)
                         )
                     }

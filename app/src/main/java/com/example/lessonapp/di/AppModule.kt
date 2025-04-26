@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.lessonapp.room.LessonAppDatabase
 import com.example.lessonapp.room.LessonDao
+import com.example.lessonapp.room.NoteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,7 +18,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun providesDao(providesDatabase: LessonAppDatabase): LessonDao = providesDatabase.lessonDao()
+    fun providesLessonDao(database: LessonAppDatabase): LessonDao = database.lessonDao()
+
+    @Singleton
+    @Provides
+    fun providesNoteDao(database: LessonAppDatabase): NoteDao = database.noteDao()
 
     @Singleton
     @Provides
@@ -25,6 +30,6 @@ object AppModule {
         Room.databaseBuilder(
             context = context,
             LessonAppDatabase::class.java,
-            name = "items"
+            "items"
         ).fallbackToDestructiveMigration().build()
 }

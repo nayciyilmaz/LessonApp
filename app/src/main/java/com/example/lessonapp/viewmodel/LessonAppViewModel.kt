@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.lessonapp.repository.LessonRepository
+import com.example.lessonapp.repository.NoteRepository
 import com.example.lessonapp.room.Item
+import com.example.lessonapp.room.Note
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -18,11 +20,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LessonAppViewModel @Inject constructor(
-    private val repository: LessonRepository
+    private val repository: LessonRepository,
+    private val noteRepository: NoteRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<List<Item>>(emptyList())
     val uiState: StateFlow<List<Item>> = _uiState.asStateFlow()
+
+    private val _notesState = MutableStateFlow<List<Note>>(emptyList())
+    val notesState: StateFlow<List<Note>> = _notesState.asStateFlow()
+
 
     var inputLesson by mutableStateOf("")
         private set
@@ -66,7 +73,7 @@ class LessonAppViewModel @Inject constructor(
 
         viewModelScope.launch {
             val uppercasedName = name.uppercase()
-            val item = Item(name = uppercasedName)
+            val item = Item(lessonName = uppercasedName)
             repository.insertLesson(item)
             loadLessons()
             inputLesson = ""
@@ -115,5 +122,31 @@ class LessonAppViewModel @Inject constructor(
         val mins = (seconds % 3600) / 60
         val secs = seconds % 60
         return "%02d:%02d:%02d".format(hrs, mins, secs)
+    }
+
+    fun loadNotesByLessonId(lessonId: Int) {
+        viewModelScope.launch {
+            val notes = noteRepository.getNotesByLessonId(lessonId)
+            _notesState.value = notes
+        }
+    }
+
+    fun addNote(lessonId: Int) {
+        if (inputSubject.isBlank() || inputExplanation.isBlank()) return
+
+        viewModelScope.launch {
+            val note = Note(
+                lessonId = lessonId,
+                subjectTitle = inputSubject,
+                studyDetails = inputExplanation,
+                studyTimeInMillis = timeInSeconds,
+                date = System.currentTimeMillis()
+            )
+            noteRepository.insertNote(note)
+
+            inputSubject = ""
+            inputExplanation = ""
+            timeInSeconds = 0L
+        }
     }
 }

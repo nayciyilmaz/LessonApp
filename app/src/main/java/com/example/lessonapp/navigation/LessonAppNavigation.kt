@@ -19,9 +19,10 @@ fun LessonAppNavigation(
 ) {
     val navController = rememberNavController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val notesState by viewModel.notesState.collectAsStateWithLifecycle()
 
     NavHost(
-        navController = navController, startDestination = LessonAppScreen.AddNoteScreen.route
+        navController = navController, startDestination = LessonAppScreen.LessonsScreen.route
     ) {
         composable(route = LessonAppScreen.LessonsScreen.route) {
             LessonsScreen(
@@ -36,13 +37,25 @@ fun LessonAppNavigation(
                 inputLesson = viewModel.inputLesson
             )
         }
-        composable(route = "Lesson Details Screen/{lessonName}") { backStackEntry ->
+        composable(route = "Lesson Details Screen/{lessonName}/{lessonId}") { backStackEntry ->
             val lessonName = backStackEntry.arguments?.getString("lessonName") ?: "Ders"
-            LessonDetailsScreen(navController = navController, lessonName = lessonName)
+            val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 0
+
+            viewModel.loadNotesByLessonId(lessonId)
+
+            LessonDetailsScreen(
+                navController = navController,
+                lessonName = lessonName,
+                lessonId = lessonId,
+                notes = notesState
+            )
         }
-        composable(route = LessonAppScreen.AddNoteScreen.route) {
+        composable(route = "Add Note Screen/{lessonId}") { backStackEntry ->
+            val lessonId = backStackEntry.arguments?.getString("lessonId")?.toIntOrNull() ?: 0
+
             AddNoteScreen(
                 navController = navController,
+                lessonId = lessonId,
                 onStartClicked = { viewModel.onStartClicked() },
                 onResumeClicked = { viewModel.onResumeClicked() },
                 onStopClicked = { viewModel.onStopClicked() },
@@ -53,7 +66,11 @@ fun LessonAppNavigation(
                 inputSubject = viewModel.inputSubject,
                 inputExplanation = viewModel.inputExplanation,
                 onUpdateSubjectName = { viewModel.updateSubjectName(it) },
-                onUpdateExplanationName = { viewModel.updateExplanationName(it) }
+                onUpdateExplanationName = { viewModel.updateExplanationName(it) },
+                onSaveClicked = {
+                    viewModel.addNote(lessonId)
+                    navController.popBackStack()
+                }
             )
         }
         composable(route = LessonAppScreen.StatisticsScreen.route) {

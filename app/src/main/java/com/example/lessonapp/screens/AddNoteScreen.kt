@@ -45,7 +45,9 @@ fun AddNoteScreen(
     inputSubject: String,
     inputExplanation: String,
     onUpdateSubjectName: (String) -> Unit,
-    onUpdateExplanationName: (String) -> Unit
+    onUpdateExplanationName: (String) -> Unit,
+    lessonId: Int,
+    onSaveClicked: () -> Unit
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -150,7 +152,7 @@ fun AddNoteScreen(
                 EditTextField(
                     text = inputExplanation,
                     onValueChange = { onUpdateExplanationName(it) },
-                    label = stringResource(R.string.title_konu_basligi),
+                    label = stringResource(R.string.title_calisma_detaylari),
                     singleLine = false,
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Done
@@ -158,7 +160,7 @@ fun AddNoteScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = { },
+                    onClick = { onSaveClicked() },
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(start = 12.dp, end = 12.dp, bottom = 16.dp)
