@@ -39,6 +39,8 @@ fun LessonDetailsScreen(
     lessonId: Int,
     notes: List<Note>
 ) {
+    val filteredNotes = notes.filter { it.lessonId == lessonId }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -68,9 +70,11 @@ fun LessonDetailsScreen(
             )
 
             LazyColumn(
-                modifier = modifier.fillMaxWidth().padding(8.dp)
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
             ) {
-                items(notes) { note ->
+                items(filteredNotes) { note ->
                     NoteItem(note = note)
                 }
             }
@@ -97,28 +101,25 @@ fun NoteItem(note: Note, modifier: Modifier = Modifier) {
                 text = note.subjectTitle,
                 style = MaterialTheme.typography.titleMedium
             )
-            Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = note.studyDetails,
-                style = MaterialTheme.typography.bodyMedium
+                text = "Not: " + note.studyDetails,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = modifier.padding(top = 4.dp, bottom = 4.dp)
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(
-                    text = "Süre: $formattedTime",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = formattedDate,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+            Text(
+                text = "Süre: $formattedTime",
+                style = MaterialTheme.typography.bodySmall,
+                modifier = modifier.padding(bottom = 4.dp)
+            )
+            Text(
+                text = "Tarih:" + formattedDate,
+                style = MaterialTheme.typography.bodySmall
+            )
+
         }
     }
 }
+
 
 private fun formatTime(seconds: Long): String {
     val hrs = seconds / 3600

@@ -136,17 +136,24 @@ class LessonAppViewModel @Inject constructor(
 
         viewModelScope.launch {
             val note = Note(
-                lessonId = lessonId,
-                subjectTitle = inputSubject,
+                lessonId = lessonId,  // Doğru lessonId burada
+                subjectTitle = inputSubject.uppercase(),
                 studyDetails = inputExplanation,
                 studyTimeInMillis = timeInSeconds,
                 date = System.currentTimeMillis()
             )
             noteRepository.insertNote(note)
+            loadNotesByLessonId(lessonId)
 
+            timeInSeconds = 0L
             inputSubject = ""
             inputExplanation = ""
-            timeInSeconds = 0L
+
+            timerJob?.cancel()
+
+            isStartEnabled = true
+            isResumeEnabled = false
+            isStopEnabled = false
         }
     }
 }

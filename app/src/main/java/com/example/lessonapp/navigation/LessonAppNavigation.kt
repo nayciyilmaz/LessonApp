@@ -38,8 +38,8 @@ fun LessonAppNavigation(
             )
         }
         composable(route = "Lesson Details Screen/{lessonName}/{lessonId}") { backStackEntry ->
-            val lessonName = backStackEntry.arguments?.getString("lessonName") ?: "Ders"
-            val lessonId = backStackEntry.arguments?.getInt("lessonId") ?: 0
+            val lessonName = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("lessonName") ?: "Ders", "UTF-8")
+            val lessonId = backStackEntry.arguments?.getString("lessonId")?.toIntOrNull() ?: 0
 
             viewModel.loadNotesByLessonId(lessonId)
 
