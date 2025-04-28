@@ -4,20 +4,23 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -37,7 +40,8 @@ fun LessonDetailsScreen(
     navController: NavController,
     lessonName: String,
     lessonId: Int,
-    notes: List<Note>
+    notes: List<Note>,
+    onStartEditingNote: (Int) -> Unit = {}
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -77,7 +81,11 @@ fun LessonDetailsScreen(
                 items(groupedNotes.keys.toList()) { subjectTitle ->
                     GroupedNoteItem(
                         subjectTitle = subjectTitle,
-                        notes = groupedNotes[subjectTitle] ?: emptyList()
+                        notes = groupedNotes[subjectTitle] ?: emptyList(),
+                        onEditNote = { noteId ->
+                            onStartEditingNote(noteId)
+                            navController.navigate("Add Note Screen/${lessonId}")
+                        }
                     )
                 }
             }
@@ -89,7 +97,8 @@ fun LessonDetailsScreen(
 fun GroupedNoteItem(
     subjectTitle: String,
     notes: List<Note>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onEditNote: (Int) -> Unit = {}
 ) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
@@ -111,7 +120,9 @@ fun GroupedNoteItem(
                 val formattedTime = formatTime(note.studyTimeInMillis)
 
                 Row(
-                    modifier = Modifier.padding(top = 8.dp)
+                    modifier = Modifier.padding(top = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Top
                 ) {
                     Text(
                         text = "${index + 1})",
@@ -119,7 +130,9 @@ fun GroupedNoteItem(
                         modifier = modifier.padding(end = 8.dp)
                     )
 
-                    Column {
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
                         Text(
                             text = "Not: " + note.studyDetails,
                             style = MaterialTheme.typography.bodyMedium,
@@ -133,6 +146,15 @@ fun GroupedNoteItem(
                         Text(
                             text = "Tarih: $formattedDate",
                             style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    IconButton(
+                        onClick = { onEditNote(note.id) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = null
                         )
                     }
                 }

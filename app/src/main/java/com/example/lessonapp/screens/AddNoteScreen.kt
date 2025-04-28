@@ -30,7 +30,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
 import com.example.lessonapp.R
 import com.example.lessonapp.components.EditButton
 import com.example.lessonapp.components.EditTextField
@@ -54,13 +53,17 @@ fun AddNoteScreen(
     lessonId: Int,
     onSaveClicked: () -> Unit,
     onResetClicked: () -> Unit,
-    isResetEnabled: Boolean
+    isResetEnabled: Boolean,
+    isEditingNote: Boolean = false,
+    onCancelEditingNote: () -> Unit = {}
 ) {
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
             EditTopAppBar(
-                title = stringResource(R.string.title_not_ekleme),
+                title = if (isEditingNote) stringResource(R.string.title_not_duzenle) else stringResource(
+                    R.string.title_not_ekleme
+                ),
                 navController = navController,
                 canNavigate = true,
                 canStatistic = false
@@ -172,16 +175,37 @@ fun AddNoteScreen(
                     )
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Button(
-                    onClick = { onSaveClicked() },
-                    modifier = modifier
+
+                Row(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 12.dp, end = 12.dp, bottom = 16.dp)
+                        .padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                       text =  stringResource(R.string.title_kaydet),
-                        modifier = modifier.padding(4.dp)
-                    )
+                    if (isEditingNote) {
+                        Button(
+                            onClick = { onCancelEditingNote() },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.title_iptal),
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+                    }
+
+                    Button(
+                        onClick = { onSaveClicked() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = if (isEditingNote)
+                                stringResource(R.string.title_guncelle)
+                            else
+                                stringResource(R.string.title_kaydet),
+                            modifier = modifier.padding(4.dp)
+                        )
+                    }
                 }
             }
         }

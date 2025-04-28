@@ -34,11 +34,20 @@ fun LessonAppNavigation(
                 onUpdateLessonName = { name ->
                     viewModel.updateLessonName(name)
                 },
-                inputLesson = viewModel.inputLesson
+                inputLesson = viewModel.inputLesson,
+                isEditingLesson = viewModel.isEditingLesson,
+                onStartEditingLesson = { id, name ->
+                    viewModel.startEditingLesson(id, name)
+                },
+                onCancelEditingLesson = {
+                    viewModel.cancelEditingLesson()
+                }
             )
         }
         composable(route = "Lesson Details Screen/{lessonName}/{lessonId}") { backStackEntry ->
-            val lessonName = java.net.URLDecoder.decode(backStackEntry.arguments?.getString("lessonName") ?: "Ders", "UTF-8")
+            val lessonName = java.net.URLDecoder.decode(
+                backStackEntry.arguments?.getString("lessonName") ?: "Ders", "UTF-8"
+            )
             val lessonId = backStackEntry.arguments?.getString("lessonId")?.toIntOrNull() ?: 0
 
             viewModel.loadNotesByLessonId(lessonId)
@@ -47,7 +56,10 @@ fun LessonAppNavigation(
                 navController = navController,
                 lessonName = lessonName,
                 lessonId = lessonId,
-                notes = notesState
+                notes = notesState,
+                onStartEditingNote = { noteId ->
+                    viewModel.startEditingNote(noteId)
+                }
             )
         }
         composable(route = "Add Note Screen/{lessonId}") { backStackEntry ->
@@ -69,6 +81,11 @@ fun LessonAppNavigation(
                 inputExplanation = viewModel.inputExplanation,
                 onUpdateSubjectName = { viewModel.updateSubjectName(it) },
                 onUpdateExplanationName = { viewModel.updateExplanationName(it) },
+                isEditingNote = viewModel.isEditingNote,
+                onCancelEditingNote = {
+                    viewModel.cancelEditingNote()
+                    navController.popBackStack()
+                },
                 onSaveClicked = {
                     viewModel.addNote(lessonId)
                     navController.popBackStack()

@@ -3,6 +3,7 @@ package com.example.lessonapp.room
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 
 @Dao
 interface LessonDao {
@@ -12,4 +13,7 @@ interface LessonDao {
 
     @Query("SELECT * FROM items")
     suspend fun getAllLessons(): List<Item>
+
+    @Update
+    suspend fun updateLesson(item: Item)
 }

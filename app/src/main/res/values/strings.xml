@@ -17,4 +17,9 @@
     <string name="title_ders_ekle">Ders Ekle</string>
     <string name="title_ders_kaydi">Ders Kaydı</string>
     <string name="title_ders_ismi">Ders İsmi</string>
+    <string name="title_ders_duzenle">Ders Düzenleme</string>
+    <string name="title_not_duzenle">NOT DÜZENLEME</string>
+    <string name="title_guncelle">GÜNCELLE</string>
+    <string name="title_dersdüzenle">Düzenlemek istediğiniz dersi yazın</string>
+    <string name="title_dersekle">Eklemek istediğiniz dersi girin.</string>
 </resources>

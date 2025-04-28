@@ -30,6 +30,17 @@ class LessonAppViewModel @Inject constructor(
     private val _notesState = MutableStateFlow<List<Note>>(emptyList())
     val notesState: StateFlow<List<Note>> = _notesState.asStateFlow()
 
+    var isEditingLesson by mutableStateOf(false)
+        private set
+
+    var isEditingNote by mutableStateOf(false)
+        private set
+
+    var currentEditingLessonId by mutableStateOf(0)
+        private set
+
+    var currentEditingNoteId by mutableStateOf(0)
+        private set
 
     var inputLesson by mutableStateOf("")
         private set
@@ -41,7 +52,7 @@ class LessonAppViewModel @Inject constructor(
         private set
 
     var timeInSeconds by mutableStateOf(0L)
-
+        private set
 
     val formattedTime: String
         get() = formatTime(timeInSeconds)
@@ -61,11 +72,11 @@ class LessonAppViewModel @Inject constructor(
         inputLesson = lessonName
     }
 
-    fun updateSubjectName(subjectName: String){
+    fun updateSubjectName(subjectName: String) {
         inputSubject = subjectName
     }
 
-    fun updateExplanationName(explanationName: String){
+    fun updateExplanationName(explanationName: String) {
         inputExplanation = explanationName
     }
 
@@ -74,11 +85,52 @@ class LessonAppViewModel @Inject constructor(
 
         viewModelScope.launch {
             val uppercasedName = name.uppercase()
-            val item = Item(lessonName = uppercasedName)
-            repository.insertLesson(item)
+
+            if (isEditingLesson) {
+                val updatedItem = Item(id = currentEditingLessonId, lessonName = uppercasedName)
+                repository.updateLesson(updatedItem)
+                isEditingLesson = false
+                currentEditingLessonId = 0
+            } else {
+                val item = Item(lessonName = uppercasedName)
+                repository.insertLesson(item)
+            }
+
             loadLessons()
             inputLesson = ""
         }
+    }
+
+    fun startEditingLesson(lessonId: Int, lessonName: String) {
+        isEditingLesson = true
+        currentEditingLessonId = lessonId
+        inputLesson = lessonName
+    }
+
+    fun cancelEditingLesson() {
+        isEditingLesson = false
+        currentEditingLessonId = 0
+        inputLesson = ""
+    }
+
+    fun startEditingNote(noteId: Int) {
+        viewModelScope.launch {
+            val note = noteRepository.getNoteById(noteId)
+            inputSubject = note.subjectTitle
+            inputExplanation = note.studyDetails
+            timeInSeconds = note.studyTimeInMillis
+            isEditingNote = true
+            currentEditingNoteId = noteId
+
+            isStartEnabled = false
+            isResumeEnabled = true
+            isStopEnabled = false
+            isResetEnabled = false
+        }
+    }
+
+    fun updateTimeManually(time: Long) {
+        timeInSeconds = time
     }
 
     private fun loadLessons() {
@@ -87,7 +139,6 @@ class LessonAppViewModel @Inject constructor(
             _uiState.value = items
         }
     }
-
 
     fun onResetClicked() {
         timeInSeconds = 0L
@@ -132,7 +183,7 @@ class LessonAppViewModel @Inject constructor(
         }
     }
 
-     fun formatTime(seconds: Long): String {
+    fun formatTime(seconds: Long): String {
         val hrs = seconds / 3600
         val mins = (seconds % 3600) / 60
         val secs = seconds % 60
@@ -150,14 +201,27 @@ class LessonAppViewModel @Inject constructor(
         if (inputSubject.isBlank() || inputExplanation.isBlank()) return
 
         viewModelScope.launch {
-            val note = Note(
-                lessonId = lessonId,
-                subjectTitle = inputSubject.uppercase(),
-                studyDetails = inputExplanation,
-                studyTimeInMillis = timeInSeconds,
-                date = System.currentTimeMillis()
-            )
-            noteRepository.insertNote(note)
+            if (isEditingNote) {
+                val originalNote = noteRepository.getNoteById(currentEditingNoteId)
+                val updatedNote = originalNote.copy(
+                    subjectTitle = inputSubject.uppercase(),
+                    studyDetails = inputExplanation,
+                    studyTimeInMillis = timeInSeconds
+                )
+                noteRepository.updateNote(updatedNote)
+                isEditingNote = false
+                currentEditingNoteId = 0
+            } else {
+                val note = Note(
+                    lessonId = lessonId,
+                    subjectTitle = inputSubject.uppercase(),
+                    studyDetails = inputExplanation,
+                    studyTimeInMillis = timeInSeconds,
+                    date = System.currentTimeMillis()
+                )
+                noteRepository.insertNote(note)
+            }
+
             loadNotesByLessonId(lessonId)
 
             timeInSeconds = 0L
@@ -171,5 +235,18 @@ class LessonAppViewModel @Inject constructor(
             isStopEnabled = false
             isResetEnabled = false
         }
+    }
+
+    fun cancelEditingNote() {
+        isEditingNote = false
+        currentEditingNoteId = 0
+        timeInSeconds = 0L
+        inputSubject = ""
+        inputExplanation = ""
+
+        isStartEnabled = true
+        isResumeEnabled = false
+        isStopEnabled = false
+        isResetEnabled = false
     }
 }

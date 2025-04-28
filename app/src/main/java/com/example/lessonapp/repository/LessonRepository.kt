@@ -13,4 +13,8 @@ class LessonRepository @Inject constructor(private val lessonDao: LessonDao) {
     suspend fun getAllLessons(): List<Item> {
         return lessonDao.getAllLessons()
     }
+
+    suspend fun updateLesson(item: Item) {
+        lessonDao.updateLesson(item)
+    }
 }
