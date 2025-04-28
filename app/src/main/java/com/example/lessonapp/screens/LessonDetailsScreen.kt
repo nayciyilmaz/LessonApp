@@ -39,8 +39,6 @@ fun LessonDetailsScreen(
     lessonId: Int,
     notes: List<Note>
 ) {
-    val filteredNotes = notes.filter { it.lessonId == lessonId }
-
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -69,13 +67,18 @@ fun LessonDetailsScreen(
                 }
             )
 
+            val groupedNotes = notes.groupBy { it.subjectTitle }
+
             LazyColumn(
                 modifier = modifier
                     .fillMaxWidth()
                     .padding(8.dp)
             ) {
-                items(filteredNotes) { note ->
-                    NoteItem(note = note)
+                items(groupedNotes.keys.toList()) { subjectTitle ->
+                    GroupedNoteItem(
+                        subjectTitle = subjectTitle,
+                        notes = groupedNotes[subjectTitle] ?: emptyList()
+                    )
                 }
             }
         }
@@ -83,11 +86,11 @@ fun LessonDetailsScreen(
 }
 
 @Composable
-fun NoteItem(note: Note, modifier: Modifier = Modifier) {
-    val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    val formattedDate = dateFormat.format(Date(note.date))
-    val formattedTime = formatTime(note.studyTimeInMillis)
-
+fun GroupedNoteItem(
+    subjectTitle: String,
+    notes: List<Note>,
+    modifier: Modifier = Modifier
+) {
     Card(
         colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
         modifier = modifier
@@ -98,28 +101,54 @@ fun NoteItem(note: Note, modifier: Modifier = Modifier) {
             modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                text = note.subjectTitle,
+                text = subjectTitle,
                 style = MaterialTheme.typography.titleMedium
             )
-            Text(
-                text = "Not: " + note.studyDetails,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = modifier.padding(top = 4.dp, bottom = 4.dp)
-            )
-            Text(
-                text = "Süre: $formattedTime",
-                style = MaterialTheme.typography.bodySmall,
-                modifier = modifier.padding(bottom = 4.dp)
-            )
-            Text(
-                text = "Tarih:" + formattedDate,
-                style = MaterialTheme.typography.bodySmall
-            )
 
+            notes.forEachIndexed { index, note ->
+                val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+                val formattedDate = dateFormat.format(Date(note.date))
+                val formattedTime = formatTime(note.studyTimeInMillis)
+
+                Row(
+                    modifier = Modifier.padding(top = 8.dp)
+                ) {
+                    Text(
+                        text = "${index + 1})",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = modifier.padding(end = 8.dp)
+                    )
+
+                    Column {
+                        Text(
+                            text = "Not: " + note.studyDetails,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = modifier.padding(bottom = 4.dp)
+                        )
+                        Text(
+                            text = "Süre: $formattedTime",
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = modifier.padding(bottom = 4.dp)
+                        )
+                        Text(
+                            text = "Tarih: $formattedDate",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+                if (index < notes.size - 1) {
+                    HorizontalDivider(
+                        color = Color.White,
+                        thickness = 1.dp,
+                        modifier = Modifier
+                            .padding(top = 12.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }
-
 
 private fun formatTime(seconds: Long): String {
     val hrs = seconds / 3600

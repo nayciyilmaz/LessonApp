@@ -4,9 +4,10 @@
     <string name="title_ders">DERS</string>
     <string name="title_not_ekleme">NOT EKLEME</string>
     <string name="title_istatistik">İSTATİSTİK</string>
-    <string name="title_baslat">BAŞLAT</string>
-    <string name="title_devam_et">DEVAM ET</string>
-    <string name="title_durdur">DURDUR</string>
+    <string name="title_baslat">BAŞLA</string>
+    <string name="title_devam_et">DEVAM</string>
+    <string name="title_sıfırla">SIFIRLA</string>
+    <string name="title_durdur">DUR</string>
     <string name="title_onayla">ONAYLA</string>
     <string name="title_iptal">İPTAL</string>
     <string name="title_konu_basligi">Konu Başlığı</string>

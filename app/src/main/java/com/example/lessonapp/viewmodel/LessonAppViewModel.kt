@@ -49,6 +49,7 @@ class LessonAppViewModel @Inject constructor(
     var isStartEnabled by mutableStateOf(true)
     var isResumeEnabled by mutableStateOf(false)
     var isStopEnabled by mutableStateOf(false)
+    var isResetEnabled by mutableStateOf(false)
 
     private var timerJob: Job? = null
 
@@ -87,16 +88,29 @@ class LessonAppViewModel @Inject constructor(
         }
     }
 
+
+    fun onResetClicked() {
+        timeInSeconds = 0L
+        timerJob?.cancel()
+
+        isStartEnabled = true
+        isResumeEnabled = false
+        isStopEnabled = false
+        isResetEnabled = false
+    }
+
     fun onStartClicked() {
         isStartEnabled = false
         isResumeEnabled = false
         isStopEnabled = true
+        isResetEnabled = false
         startTimer()
     }
 
     fun onResumeClicked() {
         isResumeEnabled = false
         isStopEnabled = true
+        isResetEnabled = false
         startTimer()
     }
 
@@ -104,6 +118,7 @@ class LessonAppViewModel @Inject constructor(
         isStopEnabled = false
         isStartEnabled = false
         isResumeEnabled = true
+        isResetEnabled = true
         timerJob?.cancel()
     }
 
@@ -136,7 +151,7 @@ class LessonAppViewModel @Inject constructor(
 
         viewModelScope.launch {
             val note = Note(
-                lessonId = lessonId,  // Doğru lessonId burada
+                lessonId = lessonId,
                 subjectTitle = inputSubject.uppercase(),
                 studyDetails = inputExplanation,
                 studyTimeInMillis = timeInSeconds,
@@ -154,6 +169,7 @@ class LessonAppViewModel @Inject constructor(
             isStartEnabled = true
             isResumeEnabled = false
             isStopEnabled = false
+            isResetEnabled = false
         }
     }
 }

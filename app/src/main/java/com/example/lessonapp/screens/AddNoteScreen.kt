@@ -9,6 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.RestartAlt
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -47,7 +52,9 @@ fun AddNoteScreen(
     onUpdateSubjectName: (String) -> Unit,
     onUpdateExplanationName: (String) -> Unit,
     lessonId: Int,
-    onSaveClicked: () -> Unit
+    onSaveClicked: () -> Unit,
+    onResetClicked: () -> Unit,
+    isResetEnabled: Boolean
 ) {
     Scaffold(
         containerColor = Color.Transparent,
@@ -106,19 +113,25 @@ fun AddNoteScreen(
                         .wrapContentWidth(Alignment.CenterHorizontally)
                 ) {
                     EditButton(
-                        text = stringResource(R.string.title_baslat),
+                        icon = Icons.Filled.PlayArrow,
                         onClick = onStartClicked,
                         isEnabled = isStartEnabled,
                         modifier = Modifier.weight(1f)
                     )
                     EditButton(
-                        text = stringResource(R.string.title_devam_et),
+                        icon = Icons.Filled.RestartAlt,
+                        onClick = onResetClicked,
+                        isEnabled = isResetEnabled,
+                        modifier = Modifier.weight(1f)
+                    )
+                    EditButton(
+                        icon = Icons.Filled.PlayCircle,
                         onClick = onResumeClicked,
                         isEnabled = isResumeEnabled,
                         modifier = Modifier.weight(1f)
                     )
                     EditButton(
-                        text = stringResource(R.string.title_durdur),
+                        icon = Icons.Filled.Stop,
                         onClick = onStopClicked,
                         isEnabled = isStopEnabled,
                         modifier = Modifier.weight(1f)
