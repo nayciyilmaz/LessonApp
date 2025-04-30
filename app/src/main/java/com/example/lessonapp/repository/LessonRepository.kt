@@ -17,4 +17,8 @@ class LessonRepository @Inject constructor(private val lessonDao: LessonDao) {
     suspend fun updateLesson(item: Item) {
         lessonDao.updateLesson(item)
     }
+
+    suspend fun deleteLesson(lessonId: Int) {
+        lessonDao.deleteLesson(lessonId)
+    }
 }

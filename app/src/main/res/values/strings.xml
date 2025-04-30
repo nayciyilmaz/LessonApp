@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">LessonApp</string>
-        <string name="title_derslerim">DERSLERİM</string>
+    <string name="title_derslerim">DERSLERİM</string>
     <string name="title_ders">DERS</string>
     <string name="title_not_ekleme">NOT EKLEME</string>
     <string name="title_istatistik">İSTATİSTİK</string>
@@ -15,6 +15,8 @@
     <string name="title_kaydet">KAYDET</string>
     <string name="title_not_ekle">Not Ekle</string>
     <string name="title_ders_ekle">Ders Ekle</string>
+    <string name="title_ders_silme">Ders Silme</string>
+    <string name="title_not_silme">Not Silme</string>
     <string name="title_ders_kaydi">Ders Kaydı</string>
     <string name="title_ders_ismi">Ders İsmi</string>
     <string name="title_ders_duzenle">Ders Düzenleme</string>
@@ -22,4 +24,8 @@
     <string name="title_guncelle">GÜNCELLE</string>
     <string name="title_dersdüzenle">Düzenlemek istediğiniz dersi yazın</string>
     <string name="title_dersekle">Eklemek istediğiniz dersi girin.</string>
+    <string name="title_dersvenotsilme">Dersi ve ders ile tutulan tüm notlar silinsin mi?</string>
+    <string name="title_notsilme">Bu notu silmek istediğinize emin misiniz?"</string>
+    <string name="title_sil">SİL</string>
+    <string name="title_notusil">NOTU SİL</string>
 </resources>

@@ -27,7 +27,7 @@ fun EditTopAppBar(
     title: String,
     navController: NavController,
     canNavigate: Boolean,
-    canStatistic: Boolean
+    actions: @Composable RowScope.() -> Unit = {}
 ) {
     TopAppBar(
         title = {
@@ -66,28 +66,6 @@ fun EditTopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
         ),
-        actions = {
-            if (canStatistic) {
-                Box(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .size(45.dp)
-                        .shadow(4.dp)
-                        .clip(RoundedCornerShape(6.dp))
-                        .background(Color.Transparent),
-                    contentAlignment = Alignment.Center
-                ) {
-                    IconButton(onClick = {
-                        navController.navigate(LessonAppScreen.StatisticsScreen.route)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.BarChart,
-                            contentDescription = null,
-                            tint = Color.Blue
-                        )
-                    }
-                }
-            }
-        }
+        actions = actions
     )
 }

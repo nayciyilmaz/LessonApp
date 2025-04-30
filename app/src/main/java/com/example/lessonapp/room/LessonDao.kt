@@ -16,4 +16,7 @@ interface LessonDao {
 
     @Update
     suspend fun updateLesson(item: Item)
+
+    @Query("DELETE FROM items WHERE id = :lessonId")
+    suspend fun deleteLesson(lessonId: Int)
 }

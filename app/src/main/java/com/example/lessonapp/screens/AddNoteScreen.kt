@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.lessonapp.R
+import com.example.lessonapp.components.DeleteConfirmationDialog
 import com.example.lessonapp.components.EditButton
 import com.example.lessonapp.components.EditTextField
 import com.example.lessonapp.components.EditTopAppBar
@@ -55,8 +56,21 @@ fun AddNoteScreen(
     onResetClicked: () -> Unit,
     isResetEnabled: Boolean,
     isEditingNote: Boolean = false,
-    onCancelEditingNote: () -> Unit = {}
+    onCancelEditingNote: () -> Unit = {},
+    showDeleteNoteDialog: Boolean = false,
+    onShowDeleteNoteDialog: () -> Unit = {},
+    onHideDeleteNoteDialog: () -> Unit = {},
+    onDeleteNote: (Int) -> Unit = {}
 ) {
+    if (showDeleteNoteDialog) {
+        DeleteConfirmationDialog(
+            title = stringResource(R.string.title_not_silme),
+            message = stringResource(R.string.title_notsilme),
+            onConfirm = { onDeleteNote(lessonId) },
+            onDismiss = onHideDeleteNoteDialog
+        )
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -65,8 +79,7 @@ fun AddNoteScreen(
                     R.string.title_not_ekleme
                 ),
                 navController = navController,
-                canNavigate = true,
-                canStatistic = false
+                canNavigate = true
             )
         }
     ) { innerPadding ->
@@ -176,27 +189,14 @@ fun AddNoteScreen(
                 )
                 Spacer(modifier = Modifier.weight(1f))
 
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 12.dp, end = 12.dp, bottom = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(start = 12.dp, end = 12.dp, bottom = 16.dp)
                 ) {
-                    if (isEditingNote) {
-                        Button(
-                            onClick = { onCancelEditingNote() },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.title_iptal),
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
-                    }
-
                     Button(
                         onClick = { onSaveClicked() },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             text = if (isEditingNote)
@@ -205,6 +205,28 @@ fun AddNoteScreen(
                                 stringResource(R.string.title_kaydet),
                             modifier = modifier.padding(4.dp)
                         )
+                    }
+
+                    if (isEditingNote) {
+                        Button(
+                            onClick = { onShowDeleteNoteDialog() },
+                            modifier = Modifier.fillMaxWidth().padding(4.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.title_notusil),
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
+
+                        Button(
+                            onClick = { onCancelEditingNote() },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = stringResource(R.string.title_iptal),
+                                modifier = Modifier.padding(4.dp)
+                            )
+                        }
                     }
                 }
             }

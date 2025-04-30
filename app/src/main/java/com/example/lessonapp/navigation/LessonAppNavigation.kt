@@ -59,6 +59,13 @@ fun LessonAppNavigation(
                 notes = notesState,
                 onStartEditingNote = { noteId ->
                     viewModel.startEditingNote(noteId)
+                },
+                showDeleteLessonDialog = viewModel.showDeleteLessonDialog,
+                onShowDeleteLessonDialog = { viewModel.showDeleteLessonDialog() },
+                onHideDeleteLessonDialog = { viewModel.hideDeleteLessonDialog() },
+                onDeleteLesson = { id ->
+                    viewModel.deleteLesson(id)
+                    navController.popBackStack()
                 }
             )
         }
@@ -88,6 +95,13 @@ fun LessonAppNavigation(
                 },
                 onSaveClicked = {
                     viewModel.addNote(lessonId)
+                    navController.popBackStack()
+                },
+                showDeleteNoteDialog = viewModel.showDeleteNoteDialog,
+                onShowDeleteNoteDialog = { viewModel.showDeleteNoteDialog() },
+                onHideDeleteNoteDialog = { viewModel.hideDeleteNoteDialog() },
+                onDeleteNote = {
+                    viewModel.deleteCurrentNote(lessonId)
                     navController.popBackStack()
                 }
             )

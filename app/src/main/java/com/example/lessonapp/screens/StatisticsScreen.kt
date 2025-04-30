@@ -26,8 +26,7 @@ fun StatisticsScreen(
             EditTopAppBar(
                 title = stringResource(R.string.title_istatistik),
                 navController = navController,
-                canNavigate = true,
-                canStatistic = false
+                canNavigate = true
             )
         }
     ) { innerPadding ->

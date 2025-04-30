@@ -1,15 +1,21 @@
 package com.example.lessonapp.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,15 +26,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.lessonapp.R
+import com.example.lessonapp.components.DeleteConfirmationDialog
 import com.example.lessonapp.components.EditSurface
 import com.example.lessonapp.components.EditTopAppBar
+import com.example.lessonapp.navigation.LessonAppScreen
 import com.example.lessonapp.room.Note
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -41,8 +55,21 @@ fun LessonDetailsScreen(
     lessonName: String,
     lessonId: Int,
     notes: List<Note>,
-    onStartEditingNote: (Int) -> Unit = {}
+    onStartEditingNote: (Int) -> Unit = {},
+    showDeleteLessonDialog: Boolean = false,
+    onShowDeleteLessonDialog: () -> Unit = {},
+    onHideDeleteLessonDialog: () -> Unit = {},
+    onDeleteLesson: (Int) -> Unit = {}
 ) {
+    if (showDeleteLessonDialog) {
+        DeleteConfirmationDialog(
+            title = stringResource(R.string.title_ders_silme),
+            message = stringResource(R.string.title_dersvenotsilme),
+            onConfirm = { onDeleteLesson(lessonId) },
+            onDismiss = onHideDeleteLessonDialog
+        )
+    }
+
     Scaffold(
         containerColor = Color.Transparent,
         topBar = {
@@ -50,7 +77,25 @@ fun LessonDetailsScreen(
                 title = lessonName,
                 navController = navController,
                 canNavigate = true,
-                canStatistic = false
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .size(45.dp)
+                            .shadow(4.dp)
+                            .clip(RoundedCornerShape(6.dp))
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        IconButton(onClick = onShowDeleteLessonDialog) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = null,
+                                tint = Color.Blue
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { innerPadding ->
@@ -71,7 +116,8 @@ fun LessonDetailsScreen(
                 }
             )
 
-            val groupedNotes = notes.groupBy { it.subjectTitle }
+            val sortedNotes = notes.sortedByDescending { it.date }
+            val groupedNotes = sortedNotes.groupBy { it.subjectTitle }
 
             LazyColumn(
                 modifier = modifier
@@ -167,6 +213,25 @@ fun GroupedNoteItem(
                             .fillMaxWidth()
                     )
                 }
+            }
+
+            if (notes.size > 1) {
+                val totalTime = notes.sumOf { it.studyTimeInMillis }
+                val formattedTotalTime = formatTime(totalTime)
+
+                HorizontalDivider(
+                    color = Color.White,
+                    thickness = 1.dp,
+                    modifier = Modifier
+                        .padding(top = 12.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                        .fillMaxWidth()
+                )
+
+                Text(
+                    text = "Toplam Süre: $formattedTotalTime",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
             }
         }
     }

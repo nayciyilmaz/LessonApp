@@ -62,6 +62,12 @@ class LessonAppViewModel @Inject constructor(
     var isStopEnabled by mutableStateOf(false)
     var isResetEnabled by mutableStateOf(false)
 
+    var showDeleteLessonDialog by mutableStateOf(false)
+        private set
+
+    var showDeleteNoteDialog by mutableStateOf(false)
+        private set
+
     private var timerJob: Job? = null
 
     init {
@@ -248,5 +254,60 @@ class LessonAppViewModel @Inject constructor(
         isResumeEnabled = false
         isStopEnabled = false
         isResetEnabled = false
+    }
+
+    fun showDeleteLessonDialog() {
+        showDeleteLessonDialog = true
+    }
+
+    fun hideDeleteLessonDialog() {
+        showDeleteLessonDialog = false
+    }
+
+    fun showDeleteNoteDialog() {
+        showDeleteNoteDialog = true
+    }
+
+    fun hideDeleteNoteDialog() {
+        showDeleteNoteDialog = false
+    }
+
+    fun deleteLesson(lessonId: Int) {
+        viewModelScope.launch {
+            noteRepository.deleteNotesByLessonId(lessonId)
+            repository.deleteLesson(lessonId)
+
+            loadLessons()
+            hideDeleteLessonDialog()
+        }
+    }
+
+    fun deleteNote() {
+        if (currentEditingNoteId <= 0) return
+
+        viewModelScope.launch {
+            noteRepository.deleteNote(currentEditingNoteId)
+
+            val note = noteRepository.getNoteById(currentEditingNoteId)
+            val lessonId = note.lessonId
+
+            loadNotesByLessonId(lessonId)
+
+            cancelEditingNote()
+            hideDeleteNoteDialog()
+        }
+    }
+
+    fun deleteCurrentNote(lessonId: Int) {
+        if (currentEditingNoteId <= 0) return
+
+        viewModelScope.launch {
+            noteRepository.deleteNote(currentEditingNoteId)
+
+            loadNotesByLessonId(lessonId)
+
+            cancelEditingNote()
+            hideDeleteNoteDialog()
+        }
     }
 }
