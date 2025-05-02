@@ -25,4 +25,10 @@ interface NoteDao {
 
     @Query("DELETE FROM notes WHERE lessonId = :lessonId")
     suspend fun deleteNotesByLessonId(lessonId: Int)
+
+    @Query("SELECT * FROM notes WHERE date BETWEEN :startDate AND :endDate ORDER BY date ASC")
+    suspend fun getNotesByDateRange(startDate: Long, endDate: Long): List<Note>
+
+    @Query("SELECT * FROM notes ORDER BY date DESC")
+    suspend fun getAllNotes(): List<Note>
 }

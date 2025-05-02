@@ -29,4 +29,12 @@ class NoteRepository @Inject constructor(private val noteDao: NoteDao) {
     suspend fun deleteNotesByLessonId(lessonId: Int) {
         noteDao.deleteNotesByLessonId(lessonId)
     }
+
+    suspend fun getNotesByDateRange(startDate: Long, endDate: Long): List<Note> {
+        return noteDao.getNotesByDateRange(startDate, endDate)
+    }
+
+    suspend fun getAllNotes(): List<Note> {
+        return noteDao.getAllNotes()
+    }
 }

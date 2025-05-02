@@ -16,6 +16,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -91,6 +93,11 @@ class LessonAppViewModel @Inject constructor(
 
         viewModelScope.launch {
             val uppercasedName = name.uppercase()
+            val existingLesson = repository.getLessonByName(uppercasedName)
+
+            if (existingLesson != null && !isEditingLesson) {
+                return@launch
+            }
 
             if (isEditingLesson) {
                 val updatedItem = Item(id = currentEditingLessonId, lessonName = uppercasedName)
@@ -204,14 +211,15 @@ class LessonAppViewModel @Inject constructor(
     }
 
     fun addNote(lessonId: Int) {
-        if (inputSubject.isBlank() || inputExplanation.isBlank()) return
-
         viewModelScope.launch {
+            val subjectText = if (inputSubject.isBlank()) "BULUNAMADI" else inputSubject.uppercase()
+            val explanationText = if (inputExplanation.isBlank()) "BULUNAMADI" else inputExplanation
+
             if (isEditingNote) {
                 val originalNote = noteRepository.getNoteById(currentEditingNoteId)
                 val updatedNote = originalNote.copy(
-                    subjectTitle = inputSubject.uppercase(),
-                    studyDetails = inputExplanation,
+                    subjectTitle = subjectText,
+                    studyDetails = explanationText,
                     studyTimeInMillis = timeInSeconds
                 )
                 noteRepository.updateNote(updatedNote)
@@ -220,8 +228,8 @@ class LessonAppViewModel @Inject constructor(
             } else {
                 val note = Note(
                     lessonId = lessonId,
-                    subjectTitle = inputSubject.uppercase(),
-                    studyDetails = inputExplanation,
+                    subjectTitle = subjectText,
+                    studyDetails = explanationText,
                     studyTimeInMillis = timeInSeconds,
                     date = System.currentTimeMillis()
                 )

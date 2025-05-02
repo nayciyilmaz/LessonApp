@@ -26,7 +26,7 @@ fun EditSurface(
         modifier
             .padding(16.dp)
             .fillMaxWidth(),
-        color = Color(0xFF309CF3)
+        color = Color(0xFF2496EF)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -44,7 +44,7 @@ fun EditSurface(
         }
     }
     HorizontalDivider(
-        color = Color(0xFF03A9F4),
+        color = Color(0xFF00A7F3),
         thickness = 2.dp,
         modifier = modifier
             .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)

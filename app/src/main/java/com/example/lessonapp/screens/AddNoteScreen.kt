@@ -89,7 +89,7 @@ fun AddNoteScreen(
                 .fillMaxSize()
         ) {
             HorizontalDivider(
-                color = Color(0xFF03A9F4),
+                color = Color(0xFF00A2EA),
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
@@ -100,7 +100,7 @@ fun AddNoteScreen(
                 modifier = modifier.padding(top = 12.dp)
             ) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFF97749B)),
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(12.dp)

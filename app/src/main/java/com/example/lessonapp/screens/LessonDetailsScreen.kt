@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
@@ -26,10 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,7 +37,6 @@ import com.example.lessonapp.R
 import com.example.lessonapp.components.DeleteConfirmationDialog
 import com.example.lessonapp.components.EditSurface
 import com.example.lessonapp.components.EditTopAppBar
-import com.example.lessonapp.navigation.LessonAppScreen
 import com.example.lessonapp.room.Note
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -105,7 +99,7 @@ fun LessonDetailsScreen(
                 .fillMaxSize()
         ) {
             HorizontalDivider(
-                color = Color(0xFF03A9F4),
+                color = Color(0xFF00A2EA),
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
@@ -147,7 +141,7 @@ fun GroupedNoteItem(
     onEditNote: (Int) -> Unit = {}
 ) {
     Card(
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFF97749B)),
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)

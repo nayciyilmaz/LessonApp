@@ -19,4 +19,10 @@ interface LessonDao {
 
     @Query("DELETE FROM items WHERE id = :lessonId")
     suspend fun deleteLesson(lessonId: Int)
+
+    @Query("SELECT * FROM items WHERE id = :lessonId")
+    suspend fun getLessonById(lessonId: Int): Item?
+
+    @Query("SELECT * FROM items WHERE lessonName = :lessonName LIMIT 1")
+    suspend fun getLessonByName(lessonName: String): Item?
 }

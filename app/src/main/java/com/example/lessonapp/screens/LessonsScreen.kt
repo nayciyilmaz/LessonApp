@@ -96,7 +96,7 @@ fun LessonsScreen(
                 .fillMaxSize()
         ) {
             HorizontalDivider(
-                color = Color(0xFF03A9F4),
+                color = Color(0xFF00A2EA),
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
@@ -169,7 +169,7 @@ fun LessonsScreen(
             LazyColumn {
                 items(uiState) { lesson ->
                     Card(
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFF97749B)),
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 8.dp, bottom = 8.dp, start = 12.dp, end = 12.dp)

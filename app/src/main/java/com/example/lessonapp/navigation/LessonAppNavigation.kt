@@ -12,14 +12,19 @@ import com.example.lessonapp.screens.LessonDetailsScreen
 import com.example.lessonapp.screens.LessonsScreen
 import com.example.lessonapp.screens.StatisticsScreen
 import com.example.lessonapp.viewmodel.LessonAppViewModel
+import com.example.lessonapp.viewmodel.StatisticsViewModel
 
 @Composable
 fun LessonAppNavigation(
-    viewModel: LessonAppViewModel = hiltViewModel()
+    viewModel: LessonAppViewModel = hiltViewModel(),
+    statisticsViewModel: StatisticsViewModel = hiltViewModel()
 ) {
     val navController = rememberNavController()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val notesState by viewModel.notesState.collectAsStateWithLifecycle()
+    val dailyStats by statisticsViewModel.dailyStatistics.collectAsStateWithLifecycle()
+    val weeklyStats by statisticsViewModel.weeklyStatistics.collectAsStateWithLifecycle()
+    val monthlyStats by statisticsViewModel.monthlyStatistics.collectAsStateWithLifecycle()
 
     NavHost(
         navController = navController, startDestination = LessonAppScreen.LessonsScreen.route
@@ -107,7 +112,12 @@ fun LessonAppNavigation(
             )
         }
         composable(route = LessonAppScreen.StatisticsScreen.route) {
-            StatisticsScreen(navController = navController)
+            StatisticsScreen(
+                navController = navController,
+                dailyStats = dailyStats,
+                weeklyStats = weeklyStats,
+                monthlyStats = monthlyStats
+            )
         }
     }
 }
