@@ -136,18 +136,15 @@ class StatisticsViewModel @Inject constructor(
             val formattedLessonTimes = lessonTimes.mapValues {
                 statisticsCalculator.formatTimeFromSeconds(it.value)
             }
-
-            if (weekNotes.isNotEmpty()) {
-                val weeklyStat = WeeklyStatistic(
-                    startDate = statisticsCalculator.formatDate(weekStart),
-                    endDate = statisticsCalculator.formatDate(weekEnd),
-                    lessonTimes = formattedLessonTimes,
-                    totalTime = statisticsCalculator.formatTimeFromSeconds(totalTimeSeconds)
-                )
-                weeklyStats.add(weeklyStat)
-            }
+            val weeklyStat = WeeklyStatistic(
+                startDate = statisticsCalculator.formatDate(weekStart),
+                endDate = statisticsCalculator.formatDate(weekEnd),
+                lessonTimes = formattedLessonTimes,
+                totalTime = statisticsCalculator.formatTimeFromSeconds(totalTimeSeconds)
+            )
+            weeklyStats.add(weeklyStat)
         }
-        _weeklyStatistics.value = weeklyStats
+        _weeklyStatistics.value = weeklyStats.reversed()
     }
 
     private suspend fun loadMonthlyStatistics() {

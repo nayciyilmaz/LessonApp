@@ -1,5 +1,6 @@
 package com.example.lessonapp.viewmodel
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,21 +10,22 @@ import com.example.lessonapp.repository.LessonRepository
 import com.example.lessonapp.repository.NoteRepository
 import com.example.lessonapp.room.Item
 import com.example.lessonapp.room.Note
+import com.example.lessonapp.timer.TimerManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class LessonAppViewModel @Inject constructor(
     private val repository: LessonRepository,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<List<Item>>(emptyList())
@@ -32,17 +34,18 @@ class LessonAppViewModel @Inject constructor(
     private val _notesState = MutableStateFlow<List<Note>>(emptyList())
     val notesState: StateFlow<List<Note>> = _notesState.asStateFlow()
 
+    private val timerManager = TimerManager(context)
+    private var timeCollectorJob: Job? = null
+    private var uiUpdateJob: Job? = null
+
     var isEditingLesson by mutableStateOf(false)
-        private set
-
     var isEditingNote by mutableStateOf(false)
-        private set
-
     var currentEditingLessonId by mutableStateOf(0)
-        private set
-
     var currentEditingNoteId by mutableStateOf(0)
-        private set
+
+    var timeInSeconds by mutableStateOf(0L)
+    var showDeleteLessonDialog by mutableStateOf(false)
+    var showDeleteNoteDialog by mutableStateOf(false)
 
     var inputLesson by mutableStateOf("")
         private set
@@ -53,28 +56,57 @@ class LessonAppViewModel @Inject constructor(
     var inputExplanation by mutableStateOf("")
         private set
 
-    var timeInSeconds by mutableStateOf(0L)
-        private set
-
-    val formattedTime: String
-        get() = formatTime(timeInSeconds)
-
     var isStartEnabled by mutableStateOf(true)
     var isResumeEnabled by mutableStateOf(false)
     var isStopEnabled by mutableStateOf(false)
     var isResetEnabled by mutableStateOf(false)
 
-    var showDeleteLessonDialog by mutableStateOf(false)
-        private set
-
-    var showDeleteNoteDialog by mutableStateOf(false)
-        private set
-
-    private var timerJob: Job? = null
-
     init {
         loadLessons()
+        startTimeCollector()
+        startUiUpdater()
+        updateButtonStates()
     }
+
+    private fun startTimeCollector() {
+        timeCollectorJob = viewModelScope.launch {
+            timerManager.timeInSeconds.collect { seconds ->
+                timeInSeconds = seconds
+            }
+        }
+    }
+
+    private fun startUiUpdater() {
+        uiUpdateJob = viewModelScope.launch {
+            while (true) {
+                timerManager.updateTimeInSeconds()
+                delay(500)
+            }
+        }
+    }
+
+    private fun updateButtonStates() {
+        val isRunning = timerManager.isTimerRunning()
+        if (isRunning) {
+            isStartEnabled = false
+            isResumeEnabled = false
+            isStopEnabled = true
+            isResetEnabled = false
+        } else if (timeInSeconds > 0) {
+            isStartEnabled = false
+            isResumeEnabled = true
+            isStopEnabled = false
+            isResetEnabled = true
+        } else {
+            isStartEnabled = true
+            isResumeEnabled = false
+            isStopEnabled = false
+            isResetEnabled = false
+        }
+    }
+
+    val formattedTime: String
+        get() = timerManager.formatTime(timeInSeconds)
 
     fun updateLessonName(lessonName: String) {
         inputLesson = lessonName
@@ -126,24 +158,34 @@ class LessonAppViewModel @Inject constructor(
         inputLesson = ""
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        timeCollectorJob?.cancel()
+        uiUpdateJob?.cancel()
+    }
+
     fun startEditingNote(noteId: Int) {
         viewModelScope.launch {
             val note = noteRepository.getNoteById(noteId)
             inputSubject = note.subjectTitle
             inputExplanation = note.studyDetails
-            timeInSeconds = note.studyTimeInMillis
+
+            timerManager.pauseTimer()
+            timerManager.startTimer(note.studyTimeInMillis)
+            timerManager.pauseTimer()
+
             isEditingNote = true
             currentEditingNoteId = noteId
 
-            isStartEnabled = false
-            isResumeEnabled = true
-            isStopEnabled = false
-            isResetEnabled = false
+            updateButtonStates()
         }
     }
 
     fun updateTimeManually(time: Long) {
-        timeInSeconds = time
+        timerManager.stopTimer()
+        timerManager.startTimer(time)
+        timerManager.pauseTimer()
+        updateButtonStates()
     }
 
     private fun loadLessons() {
@@ -154,53 +196,23 @@ class LessonAppViewModel @Inject constructor(
     }
 
     fun onResetClicked() {
-        timeInSeconds = 0L
-        timerJob?.cancel()
-
-        isStartEnabled = true
-        isResumeEnabled = false
-        isStopEnabled = false
-        isResetEnabled = false
+        timerManager.stopTimer()
+        updateButtonStates()
     }
 
     fun onStartClicked() {
-        isStartEnabled = false
-        isResumeEnabled = false
-        isStopEnabled = true
-        isResetEnabled = false
-        startTimer()
+        timerManager.startTimer(0)
+        updateButtonStates()
     }
 
     fun onResumeClicked() {
-        isResumeEnabled = false
-        isStopEnabled = true
-        isResetEnabled = false
-        startTimer()
+        timerManager.startTimer(timeInSeconds)
+        updateButtonStates()
     }
 
     fun onStopClicked() {
-        isStopEnabled = false
-        isStartEnabled = false
-        isResumeEnabled = true
-        isResetEnabled = true
-        timerJob?.cancel()
-    }
-
-    private fun startTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (true) {
-                delay(1000L)
-                timeInSeconds++
-            }
-        }
-    }
-
-    fun formatTime(seconds: Long): String {
-        val hrs = seconds / 3600
-        val mins = (seconds % 3600) / 60
-        val secs = seconds % 60
-        return "%02d:%02d:%02d".format(hrs, mins, secs)
+        timerManager.pauseTimer()
+        updateButtonStates()
     }
 
     fun loadNotesByLessonId(lessonId: Int) {
@@ -215,12 +227,14 @@ class LessonAppViewModel @Inject constructor(
             val subjectText = if (inputSubject.isBlank()) "BULUNAMADI" else inputSubject.uppercase()
             val explanationText = if (inputExplanation.isBlank()) "BULUNAMADI" else inputExplanation
 
+            val currentTime = timerManager.getCurrentTimeInSeconds()
+
             if (isEditingNote) {
                 val originalNote = noteRepository.getNoteById(currentEditingNoteId)
                 val updatedNote = originalNote.copy(
                     subjectTitle = subjectText,
                     studyDetails = explanationText,
-                    studyTimeInMillis = timeInSeconds
+                    studyTimeInMillis = currentTime
                 )
                 noteRepository.updateNote(updatedNote)
                 isEditingNote = false
@@ -230,38 +244,28 @@ class LessonAppViewModel @Inject constructor(
                     lessonId = lessonId,
                     subjectTitle = subjectText,
                     studyDetails = explanationText,
-                    studyTimeInMillis = timeInSeconds,
+                    studyTimeInMillis = currentTime,
                     date = System.currentTimeMillis()
                 )
                 noteRepository.insertNote(note)
             }
 
             loadNotesByLessonId(lessonId)
-
-            timeInSeconds = 0L
+            timerManager.stopTimer()
             inputSubject = ""
             inputExplanation = ""
-
-            timerJob?.cancel()
-
-            isStartEnabled = true
-            isResumeEnabled = false
-            isStopEnabled = false
-            isResetEnabled = false
+            updateButtonStates()
         }
     }
 
     fun cancelEditingNote() {
         isEditingNote = false
         currentEditingNoteId = 0
-        timeInSeconds = 0L
+        timerManager.stopTimer()
         inputSubject = ""
         inputExplanation = ""
 
-        isStartEnabled = true
-        isResumeEnabled = false
-        isStopEnabled = false
-        isResetEnabled = false
+        updateButtonStates()
     }
 
     fun showDeleteLessonDialog() {
@@ -282,9 +286,9 @@ class LessonAppViewModel @Inject constructor(
 
     fun deleteLesson(lessonId: Int) {
         viewModelScope.launch {
+            deleteNote()
             noteRepository.deleteNotesByLessonId(lessonId)
             repository.deleteLesson(lessonId)
-
             loadLessons()
             hideDeleteLessonDialog()
         }
@@ -300,7 +304,6 @@ class LessonAppViewModel @Inject constructor(
             val lessonId = note.lessonId
 
             loadNotesByLessonId(lessonId)
-
             cancelEditingNote()
             hideDeleteNoteDialog()
         }
@@ -313,7 +316,6 @@ class LessonAppViewModel @Inject constructor(
             noteRepository.deleteNote(currentEditingNoteId)
 
             loadNotesByLessonId(lessonId)
-
             cancelEditingNote()
             hideDeleteNoteDialog()
         }

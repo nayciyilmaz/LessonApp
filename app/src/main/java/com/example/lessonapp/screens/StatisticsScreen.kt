@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -50,7 +51,7 @@ fun StatisticsScreen(
                 .fillMaxSize()
         ) {
             HorizontalDivider(
-                color = Color(0xFF00A2EA),
+                color = Color(0xFF03A9F4),
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
@@ -63,21 +64,21 @@ fun StatisticsScreen(
             ) {
                 item {
                     StatisticCard(
-                        title = "Günlük",
+                        title = stringResource(R.string.title_günlük),
                         content = { DailyStatisticsContent(dailyStats) }
                     )
                 }
 
                 item {
                     StatisticCard(
-                        title = "Haftalık",
+                        title = stringResource(R.string.title_haftalık),
                         content = { WeeklyStatisticsContent(weeklyStats) }
                     )
                 }
 
                 item {
                     StatisticCard(
-                        title = "Aylık",
+                        title = stringResource(R.string.title_aylık),
                         content = { MonthlyStatisticsContent(monthlyStats) }
                     )
                 }
@@ -104,7 +105,7 @@ fun StatisticCard(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF97749B))
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9))
     ) {
         Column(
             modifier = Modifier
@@ -148,7 +149,6 @@ fun StatisticCard(
 @Composable
 fun DailyStatisticsContent(dailyStats: List<DailyStatistic>) {
     if (dailyStats.isEmpty()) {
-        EmptyStatisticsMessage()
         return
     }
     Column(
@@ -165,7 +165,6 @@ fun DailyStatItem(dailyStat: DailyStatistic) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-        //.padding(12.dp)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -191,7 +190,7 @@ fun DailyStatItem(dailyStat: DailyStatistic) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Toplam",
+                text = stringResource(R.string.title_toplam),
                 fontWeight = FontWeight.Bold
             )
             Text(
@@ -204,7 +203,7 @@ fun DailyStatItem(dailyStat: DailyStatistic) {
             color = Color.White,
             thickness = 1.dp,
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
                 .fillMaxWidth()
         )
     }
@@ -213,7 +212,6 @@ fun DailyStatItem(dailyStat: DailyStatistic) {
 @Composable
 fun WeeklyStatisticsContent(weeklyStats: List<WeeklyStatistic>) {
     if (weeklyStats.isEmpty()) {
-        EmptyStatisticsMessage()
         return
     }
 
@@ -221,41 +219,50 @@ fun WeeklyStatisticsContent(weeklyStats: List<WeeklyStatistic>) {
         modifier = Modifier.fillMaxWidth()
     ) {
         weeklyStats.forEach { weeklyStat ->
-            WeeklyStatItem(weeklyStat)
+            WeeklyStatItem(weeklyStat = weeklyStat)
         }
     }
 }
 
 @Composable
-fun WeeklyStatItem(weeklyStat: WeeklyStatistic) {
+fun WeeklyStatItem(
+    weeklyStat: WeeklyStatistic
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
     ) {
-        Text(
-            text = "${weeklyStat.startDate} - ${weeklyStat.endDate}",
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "${weeklyStat.startDate} - ${weeklyStat.endDate}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp
+            )
+        }
 
-        weeklyStat.lessonTimes.forEach { (lesson, time) ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = lesson)
-                Text(text = time)
+        if (weeklyStat.lessonTimes.isNotEmpty()) {
+            weeklyStat.lessonTimes.forEach { (lesson, time) ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(text = lesson)
+                    Text(text = time)
+                }
             }
-
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Haftalık Toplam",
+                text = stringResource(R.string.title_haftalik_toplam),
                 fontWeight = FontWeight.Bold
             )
             Text(
@@ -263,20 +270,21 @@ fun WeeklyStatItem(weeklyStat: WeeklyStatistic) {
                 fontWeight = FontWeight.Bold
             )
         }
+
         HorizontalDivider(
             color = Color.White,
             thickness = 1.dp,
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
                 .fillMaxWidth()
         )
     }
 }
 
+
 @Composable
 fun MonthlyStatisticsContent(monthlyStats: List<MonthlyStatistic>) {
     if (monthlyStats.isEmpty()) {
-        EmptyStatisticsMessage()
         return
     }
 
@@ -294,7 +302,6 @@ fun MonthlyStatItem(monthlyStat: MonthlyStatistic) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(12.dp)
     ) {
         Text(
             text = monthlyStat.month,
@@ -306,7 +313,7 @@ fun MonthlyStatItem(monthlyStat: MonthlyStatistic) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "Aylık Toplam",
+                text = stringResource(R.string.title_aylik_toplam),
                 fontWeight = FontWeight.Bold
             )
             Text(
@@ -318,25 +325,8 @@ fun MonthlyStatItem(monthlyStat: MonthlyStatistic) {
             color = Color.White,
             thickness = 1.dp,
             modifier = Modifier
-                .padding(top = 12.dp, bottom = 8.dp, start = 8.dp, end = 8.dp)
+                .padding(top = 12.dp, bottom = 12.dp, start = 8.dp, end = 8.dp)
                 .fillMaxWidth()
-        )
-    }
-}
-
-@Composable
-fun EmptyStatisticsMessage() {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Henüz istatistik bulunmamaktadır",
-            fontSize = 16.sp,
-            color = Color.Gray,
-            textAlign = TextAlign.Center
         )
     }
 }

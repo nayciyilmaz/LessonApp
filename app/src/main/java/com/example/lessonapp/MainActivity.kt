@@ -1,5 +1,6 @@
 package com.example.lessonapp
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
@@ -26,7 +27,11 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Dark Mode and Light Mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
+        //Rotate the Screen Sideways
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         window.statusBarColor = Color.Transparent.toArgb()
         window.navigationBarColor = Color.Transparent.toArgb()

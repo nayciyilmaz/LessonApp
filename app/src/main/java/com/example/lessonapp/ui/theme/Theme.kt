@@ -1,6 +1,5 @@
 package com.example.lessonapp.ui.theme
 
-
 import android.os.Build
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme

@@ -28,4 +28,10 @@
     <string name="title_notsilme">Bu notu silmek istediğinize emin misiniz?"</string>
     <string name="title_sil">SİL</string>
     <string name="title_notusil">NOTU SİL</string>
+    <string name="title_toplam">Toplam</string>
+    <string name="title_haftalik_toplam">Haftalık Toplam</string>
+    <string name="title_aylik_toplam">Aylık Toplam</string>
+    <string name="title_günlük">Günlük</string>
+    <string name="title_aylık">Aylık</string>
+    <string name="title_haftalık">Haftalık</string>
 </resources>

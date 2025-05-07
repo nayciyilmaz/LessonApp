@@ -35,6 +35,7 @@ import com.example.lessonapp.components.DeleteConfirmationDialog
 import com.example.lessonapp.components.EditButton
 import com.example.lessonapp.components.EditTextField
 import com.example.lessonapp.components.EditTopAppBar
+import com.example.lessonapp.components.EditingNoteButton
 
 @Composable
 fun AddNoteScreen(
@@ -89,7 +90,7 @@ fun AddNoteScreen(
                 .fillMaxSize()
         ) {
             HorizontalDivider(
-                color = Color(0xFF00A2EA),
+                color = Color(0xFF03A9F4),
                 thickness = 8.dp,
                 modifier = modifier.fillMaxWidth()
             )
@@ -100,7 +101,7 @@ fun AddNoteScreen(
                 modifier = modifier.padding(top = 12.dp)
             ) {
                 Card(
-                    colors = CardDefaults.cardColors(containerColor = Color(0xFF97749B)),
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFA488A9)),
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(12.dp)
@@ -194,39 +195,24 @@ fun AddNoteScreen(
                         .fillMaxWidth()
                         .padding(start = 12.dp, end = 12.dp, bottom = 16.dp)
                 ) {
-                    Button(
-                        onClick = { onSaveClicked() },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = if (isEditingNote)
-                                stringResource(R.string.title_guncelle)
-                            else
-                                stringResource(R.string.title_kaydet),
-                            modifier = modifier.padding(4.dp)
-                        )
-                    }
+                    EditingNoteButton(
+                        text = if (isEditingNote)
+                            stringResource(R.string.title_guncelle)
+                        else
+                            stringResource(R.string.title_kaydet),
+                        onClick = { onSaveClicked() }
+                    )
 
                     if (isEditingNote) {
-                        Button(
+                        EditingNoteButton(
+                            text = stringResource(R.string.title_notusil),
                             onClick = { onShowDeleteNoteDialog() },
-                            modifier = Modifier.fillMaxWidth().padding(4.dp)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.title_notusil),
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
-
-                        Button(
-                            onClick = { onCancelEditingNote() },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(
-                                text = stringResource(R.string.title_iptal),
-                                modifier = Modifier.padding(4.dp)
-                            )
-                        }
+                            modifier = Modifier.padding(4.dp)
+                        )
+                        EditingNoteButton(
+                            text = stringResource(R.string.title_iptal),
+                            onClick = { onCancelEditingNote() }
+                        )
                     }
                 }
             }
